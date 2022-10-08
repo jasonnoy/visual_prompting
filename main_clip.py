@@ -346,8 +346,8 @@ def validate(val_loader, texts, model, prompter, criterion, args):
             val_preds=target.cpu()
             val_preds = val_preds.numpy()
             val_preds = np.argmax(val_preds)
-            all_preds = np.concatenate(all_preds,val_preds)
-            all_targets = np.concatenate(all_targets,val_targets)
+            all_preds = val_preds if len(all_preds)==0 else np.concatenate(all_preds,val_preds)
+            all_targets = val_targets if len(all_targets)==0 else np.concatenate(all_targets,val_targets)
             
             losses.update(loss.item(), images.size(0))
             top1_prompt.update(acc1[0].item(), images.size(0))
