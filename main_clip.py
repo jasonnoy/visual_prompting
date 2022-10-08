@@ -361,23 +361,9 @@ def validate(val_loader, texts, model, prompter, criterion, args):
         
         val_targets=val_targets.cpu()
         val_preds=val_preds.cpu()
-        
-        topk=(1,)
-        maxk = max(topk)
-        _, preds = val_preds.topk(maxk, 1, True, True)
-        print("preds:",preds)
-        preds = preds.t()
-        preds = preds[0]
-#         print("val_targets:",val_targets)
-# #         print("val_preds:",val_preds)
-#         val_targets = [1 if v >= 0.5 else 0 for v in val_targets]
-
-# #         print("val_preds:",val_preds)
-    
-#         val_preds = [0 if v[0]>v[1] else 1 for v in val_preds]
-        
-#         val_preds = torch.tensor(val_preds)
-#         print("val_preds:",val_preds)
+        val_preds = val_preds.numpy()
+        val_preds = np.argmax(val_preds)
+        print("val_preds:",val_preds)
         print(classification_report(val_targets, val_preds))
 
         if args.use_wandb:
