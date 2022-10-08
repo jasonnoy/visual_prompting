@@ -8,6 +8,7 @@ import random
 import wandb
 
 import torch
+import numpy as np
 import torch.backends.cudnn as cudnn
 from torch.cuda.amp import GradScaler, autocast
 from torch.utils.data import DataLoader, Dataset
