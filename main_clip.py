@@ -324,8 +324,8 @@ def validate(val_loader, texts, model, prompter, criterion, args):
 
     with torch.no_grad():
         end = time.time()
-        val_preds=[]
-        val_targets=[]
+        all_preds=[]
+        all_targets=[]
         best_acc=0
         for i, (images, target) in enumerate(tqdm(val_loader)):
 
@@ -341,9 +341,14 @@ def validate(val_loader, texts, model, prompter, criterion, args):
 
             # measure accuracy and record loss
             acc1 = accuracy(output_prompt, target, topk=(1,))
-            if acc1[0].item()>best_acc:
-                val_preds = output_prompt
-                val_targets = target
+            val_targets=output_prompt.cpu()
+            val_targets=val_targets.numpy()
+            val_preds=target.cpu()
+            val_preds = val_preds.numpy()
+            val_preds = np.argmax(val_preds, axis=1)
+            all_preds = np.concatenate(all_preds,val_preds)
+            all_targets = np.concatenate(all_targets,val_targets)
+            
             losses.update(loss.item(), images.size(0))
             top1_prompt.update(acc1[0].item(), images.size(0))
 
@@ -360,12 +365,7 @@ def validate(val_loader, texts, model, prompter, criterion, args):
         print(' * Prompt Acc@1 {top1_prompt.avg:.3f} Original Acc@1 {top1_org.avg:.3f}'
               .format(top1_prompt=top1_prompt, top1_org=top1_org))
         
-        val_targets=val_targets.cpu()
-        val_preds=val_preds.cpu()
-        val_preds = val_preds.numpy()
-        val_preds = np.argmax(val_preds, axis=1)
-        print("val_preds:",val_preds)
-        print(classification_report(val_targets, val_preds))
+        print(classification_report(all_targets, all_preds))
 
         if args.use_wandb:
             wandb.log({
