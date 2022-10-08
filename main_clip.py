@@ -345,7 +345,7 @@ def validate(val_loader, texts, model, prompter, criterion, args):
             val_targets=val_targets.numpy()
             val_preds=target.cpu()
             val_preds = val_preds.numpy()
-            val_preds = np.argmax(val_preds, axis=1)
+            val_preds = np.argmax(val_preds)
             all_preds = np.concatenate(all_preds,val_preds)
             all_targets = np.concatenate(all_targets,val_targets)
             
