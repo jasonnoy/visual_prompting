@@ -324,8 +324,8 @@ def validate(val_loader, texts, model, prompter, criterion, args):
 
     with torch.no_grad():
         end = time.time()
-        all_preds=[]
-        all_targets=[]
+        all_preds=None
+        all_targets=None
         best_acc=0
         for i, (images, target) in enumerate(tqdm(val_loader)):
 
@@ -341,13 +341,12 @@ def validate(val_loader, texts, model, prompter, criterion, args):
 
             # measure accuracy and record loss
             acc1 = accuracy(output_prompt, target, topk=(1,))
-            val_targets=output_prompt.cpu()
+            val_preds=output_prompt.cpu().argmax()
             val_targets=val_targets.numpy()
             val_preds=target.cpu()
             val_preds = val_preds.numpy()
-            val_preds = np.argmax(val_preds)
-            all_preds = val_preds if len(all_preds)==0 else np.concatenate(all_preds,val_preds)
-            all_targets = val_targets if len(all_targets)==0 else np.concatenate(all_targets,val_targets)
+            all_preds = val_preds if val_preds is None else np.concatenate(all_preds,val_preds)
+            all_targets = val_targets if all_targets is None else np.concatenate(all_targets,val_targets)
             
             losses.update(loss.item(), images.size(0))
             top1_prompt.update(acc1[0].item(), images.size(0))
