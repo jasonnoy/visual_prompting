@@ -365,8 +365,9 @@ def validate(val_loader, texts, model, prompter, criterion, args):
         topk=(1,)
         maxk = max(topk)
         _, pred = val_preds.topk(maxk, 1, True, True)
-        preds = pred.t()
         print("preds:",preds)
+        preds = pred.t()
+        preds = preds[0]
 #         print("val_targets:",val_targets)
 # #         print("val_preds:",val_preds)
 #         val_targets = [1 if v >= 0.5 else 0 for v in val_targets]
