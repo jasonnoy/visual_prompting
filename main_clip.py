@@ -342,7 +342,7 @@ def validate(val_loader, texts, model, prompter, criterion, args):
             # measure accuracy and record loss
             acc1 = accuracy(output_prompt, target, topk=(1,))
             
-            val_preds=output_prompt.cpu().argmax()
+            val_preds=output_prompt.cpu().argmax(axis=-1)
             val_preds = val_preds.numpy()
             val_targets=target.cpu().numpy()
             print("val_preds:",val_preds)
